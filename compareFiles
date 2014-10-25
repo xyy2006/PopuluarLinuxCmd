@@ -1,0 +1,4 @@
+# compare files tools: 
+diff -bBiIw -y env.txt env_YY.txt |less
+comm -3  env.txt env_YY.txt |less
+cmp -l env.txt env_YY.txt |less
