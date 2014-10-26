@@ -1,0 +1,12 @@
+# bash can manipulate string without 3rd party tools like sed,awk, do you know it?
+# look at this example:
+	function dir_file_ext ()
+	{
+	for FILE in $(find . -name "*.*"); do
+		BASENAME="${FILE%.[^.]*}"
+		DIRNAME="${BASENAME%/[^/]*}"
+		FILENAME="${BASENAME:${#DIRNAME} + 1}"
+		EXT="${FILE##*\.}"
+		echo "${DIRNAME}/${FILENAME}.${EXT}"
+	done
+	}
