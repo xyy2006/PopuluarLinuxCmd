@@ -1,0 +1,24 @@
+Find & Sed: Find and Replace on the Command Line
+NOV 25TH, 2010
+Since using vim, I sometimes miss the great find and replace that TextMate offers, but fear not: find and sed fill the gap quite nicely:
+
+find . -type f -exec sed -i 's/search/replace/g' '{}' \;
+To make sure your find and search are looking for the right things, you can do the following 1st:
+
+find . -type f -exec grep 'search' '{}' \;
+This command tells find to search all files recursively and pass the to the sed stream editor, which in turn search and replaces all the occurrences (see the g flag at the end, which stands for global).
+
+To avoid certain files, you can exclude them from the find command, i.e.
+
+find . -type f -not \( -name '*.json' \) -exec grep 'search' '{}' \;
+This will recursively search all the files, but exclude files with the .json extension.
+
+You can also make this more complex by excluding json and JavaScript files, i.e.
+
+find . -type f -not \( -name '*.json' -o -name '*.js' \) -exec grep 'search' '{}' \;
+The -o is the logical or operator.
+
+N.B: the -i argument for the sed command means ‘edit-in-place’. You can pass a value with it to create a backup. This might not be a bad idea. As with most (all?) Linux commands, you fly without a net & there is no undo. Version control is the net I use.
+
+I sometimes get confused about the exact syntax of the command, hence the quick post.
+
