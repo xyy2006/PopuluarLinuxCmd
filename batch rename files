@@ -1,0 +1,21 @@
+0, find . -name "*.shell" -exec mv {} $(echo {} | sed -e 's/\.shell$/.sh/') \; # this is wrong, because {} will be treated as "{}"
+# It seems that echo and sed in command substitution didn’t generate the correct new file name for us. And it really didn’t.
+# In fact,  Shell do the command substitution before invoking find, at that point, “{}” doesn’t have any special meaning, it’s just “{}” literally, not the file name. So any processing against it should produce a wrong result.
+
+# this may work or not depending on your linux version.
+1, find . -type f -iname "*.jpg" -exec rename 's/_full/_500/' {} \;
+
+
+# For those wondering about the perverse usage of sh -c here it is: 
+2, find spec -name "*_test.rb" -exec sh -c 'echo mv "$1" "$(echo "$1" | sed s/test.rb\$/spec.rb/)"' _ {} \;
+# or 
+# We can do the rename using “sh -c” instead:
+  find . -name "*.shell" -exec sh -c 'mv $1 $(echo $1 | sed -e "s/.shell$/.sh/")' mv  {} \;
+# Here, when a matching file is found, find will start a sh shell, passing it mv as the command name, current file name(“{}”) as the first and sole argument , sh then execute command
+# mv $1 $(echo $1 | sed -e "s/.shell$/.sh/")
+# In the sh shell, $1 is the first positional parameter(thus the file name found). This way,everything goes fine.
+# Here comes the Conclusion:  In Shell environment, command substitution happens at argument processing stage, before the upper most command(like the find command here) getting executed, so it can’t use any result produced by the upper most command. If we want such result, use sh -c instead.
+
+
+# another way using loop
+3, for f in `find . -type f -name "filename"`; do mv $f `echo $f | sed "s/search/replace/"`; done
